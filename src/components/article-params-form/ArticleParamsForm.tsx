@@ -17,16 +17,26 @@ import {
 
 import styles from './ArticleParamsForm.module.scss';
 import clsx from 'clsx';
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useRef } from 'react';
+import { useMenuClose } from './hooks/useMenuClose';
 
 export type ArticleParamsFormProps = {
 	setAppState: (value: ArticleStateType) => void;
 };
 
+
 export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	const { setAppState } = props;
-	const [open, setOpen] = useState<boolean>(false);
+	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 	const [formState, setFormState] = useState<ArticleStateType>(defaultArticleState);
+	const containerRef = useRef<HTMLDivElement | null>(null);
+
+	useMenuClose({
+		isMenuOpen,
+		setMenuClosed: () => setIsMenuOpen(false),
+		containerRef,
+	});
+
 
 	const handleChange = (fieldName: string) => {
 		return (value: OptionType) => {
@@ -39,7 +49,6 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		
 		setAppState(formState);
 	};
 
@@ -52,14 +61,14 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	return (
 		<>
 			<ArrowButton
-				isActive={open}
-				onClick={() => setOpen((currentOpen) => !currentOpen)}
+				isActive={isMenuOpen}
+				onClick={() => setIsMenuOpen((currentOpen) => !currentOpen)}
 			/>
 			<div
-				onClick={() => setOpen(false)}
-				className={clsx(styles.overlay, open && styles.overlay_open)}>
+				onClick={() => setIsMenuOpen(false)}
+				className={clsx(styles.overlay, isMenuOpen && styles.overlay_open)}>
 			</div>
-			<aside className={clsx(styles.container, open && styles.container_open)}>
+			<aside className={clsx(styles.container, isMenuOpen && styles.container_open)}>
 				<form
 					onSubmit={handleSubmit}
 					onReset={handleReset}
