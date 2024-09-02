@@ -1,37 +1,42 @@
 import { useEffect } from 'react';
 
-type UseMenuClose = (params: {
-	containerRef: React.RefObject<HTMLElement>;
-	isMenuOpen: boolean;
-	setMenuClosed: () => void;
-}) => void;
+type TUseMenuClose = {
+	isOpen: boolean;
+	onClose: () => void;
+	rootRef: React.RefObject<HTMLElement>;
+};
 
-export const useMenuClose: UseMenuClose = ({
-	containerRef,
-	isMenuOpen,
-	setMenuClosed,
-}) => {
+export const useMenuClose = ({ isOpen, onClose, rootRef }: TUseMenuClose) => {
 	useEffect(() => {
-		if (!isMenuOpen) return;
+		if (!isOpen) return;
 
-		const handleMousedown = ({ target }: MouseEvent) => {
-			if (target instanceof Node && !containerRef.current?.contains(target)) {
-				setMenuClosed();
+		function handleClickOutside(event: MouseEvent) {
+			const { target } = event;
+			
+			const isOutsideClick =
+				target instanceof Node &&
+				rootRef.current &&
+				!rootRef.current.contains(target);
+
+			if (isOutsideClick) {
+				onClose();
+			}
+		}
+
+		const handleEscape = (e: KeyboardEvent) => {
+			if (e.key === 'Escape') {
+				onClose();
 			}
 		};
 
-		const handleEscape = ({ key }: KeyboardEvent) => {
-			if (key === 'Escape') {
-				setMenuClosed();
-			}
-		};
+		document.addEventListener('keydown', handleEscape);
+		document.addEventListener('mousedown', handleClickOutside);
 
-		window.addEventListener('mousedown', handleMousedown);
-		window.addEventListener('keydown', handleEscape);
-
+		//  обязательно удаляем обработчики в `clean-up`- функции
 		return () => {
-			window.removeEventListener('mousedown', handleMousedown);
-			window.removeEventListener('keydown', handleEscape);
+			document.removeEventListener('keydown', handleEscape);
+			document.removeEventListener('mousedown', handleClickOutside);
 		};
-	}, [containerRef, isMenuOpen, setMenuClosed]);
+		// обязательно следим за `isOpen`, чтобы срабатывало только при открытии, а не при любой перерисовке компонента
+	}, [isOpen, onClose, rootRef]);
 };

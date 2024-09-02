@@ -29,12 +29,12 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	const { setAppState } = props;
 	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 	const [formState, setFormState] = useState<ArticleStateType>(defaultArticleState);
-	const containerRef = useRef<HTMLDivElement | null>(null);
+	const formRef = useRef<HTMLDivElement | null>(null);
 
 	useMenuClose({
-		isMenuOpen,
-		setMenuClosed: () => setIsMenuOpen(false),
-		containerRef,
+		isOpen: isMenuOpen,
+		onClose: () => setIsMenuOpen(false),
+		rootRef: formRef,
 	});
 
 
@@ -59,7 +59,7 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	};
 
 	return (
-		<>
+		<div ref={formRef}>
 			<ArrowButton
 				isActive={isMenuOpen}
 				onClick={() => setIsMenuOpen((currentOpen) => !currentOpen)}
@@ -118,6 +118,6 @@ export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 					</div>
 				</form>
 			</aside>
-		</>
+		</div>
 	);
 };
