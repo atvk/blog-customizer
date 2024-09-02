@@ -32,11 +32,10 @@ export const useMenuClose = ({ isOpen, onClose, rootRef }: TUseMenuClose) => {
 		document.addEventListener('keydown', handleEscape);
 		document.addEventListener('mousedown', handleClickOutside);
 
-		//  обязательно удаляем обработчики в `clean-up`- функции
 		return () => {
 			document.removeEventListener('keydown', handleEscape);
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
-		// обязательно следим за `isOpen`, чтобы срабатывало только при открытии, а не при любой перерисовке компонента
+		
 	}, [isOpen, onClose, rootRef]);
 };
