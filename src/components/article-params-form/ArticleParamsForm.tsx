@@ -24,7 +24,6 @@ export type ArticleParamsFormProps = {
 	setAppState: (value: ArticleStateType) => void;
 };
 
-
 export const ArticleParamsForm = (props: ArticleParamsFormProps) => {
 	const { setAppState } = props;
 	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
